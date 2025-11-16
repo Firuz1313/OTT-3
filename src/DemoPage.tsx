@@ -27,10 +27,10 @@ const DemoPage: React.FC = () => {
       {
         id: '1',
         title: 'Big Buck Bunny',
-        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.m3u8',
-        type: 'hls' as const,
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        type: 'mp4' as const,
         thumbnail: 'https://example.com/thumb1.jpg',
-        duration: 0
+        duration: 596
       },
       {
         id: '2',

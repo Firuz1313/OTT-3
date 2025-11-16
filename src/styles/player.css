@@ -43,7 +43,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: opacity 0.2s ease;
+  opacity: 0.8;
+}
+
+.player-header-button:hover {
+  opacity: 1;
 }
 
 .player-header-button:hover {

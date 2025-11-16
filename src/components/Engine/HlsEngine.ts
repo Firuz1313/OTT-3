@@ -20,22 +20,12 @@ export class HlsEngine {
   loadSource(url: string, videoElement: HTMLVideoElement): void {
     if (this.hls) {
       this.videoElement = videoElement;
-      const proxiedUrl = this.getProxiedUrl(url);
-      this.hls.loadSource(proxiedUrl);
+      this.hls.loadSource(url);
       this.hls.attachMedia(videoElement);
     } else {
       // Fallback to native HLS support (Safari)
-      const proxiedUrl = this.getProxiedUrl(url);
-      videoElement.src = proxiedUrl;
+      videoElement.src = url;
     }
-  }
-
-  private getProxiedUrl(url: string): string {
-    // If page is HTTPS but URL is HTTP, route through proxy to avoid mixed content
-    if (window.location.protocol === 'https:' && url.startsWith('http://')) {
-      return `/proxy/${encodeURIComponent(url)}`;
-    }
-    return url;
   }
 
   destroy(): void {

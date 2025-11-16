@@ -385,8 +385,7 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       }
 
       setSegments(segmentData);
-    } catch (error) {
-      console.warn('Segment visualization unavailable:', error);
+    } catch {
       setSegments([]);
     }
   };

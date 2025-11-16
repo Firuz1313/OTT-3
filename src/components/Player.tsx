@@ -804,6 +804,19 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
 
   return (
     <div className={getPlayerClass()}>
+      <div className="player-header">
+        <span className="player-header-text">Made at Theorem with love</span>
+        <button
+          className="player-header-button"
+          title="More information"
+          onClick={() => setIsStatsVisible(true)}
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+        </button>
+      </div>
+
       <video
         ref={videoRef}
         className="video-element"
@@ -814,7 +827,7 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
         onLoadedData={() => console.log('Video data loaded')}
         onError={(e) => console.log('Video error:', e)}
       />
-      
+
       <div className="player-controls visible">
         <TimeSlider
           currentTime={currentTime}

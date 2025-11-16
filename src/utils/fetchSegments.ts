@@ -21,49 +21,41 @@ export const fetchHlsSegments = async (manifestUrl: string): Promise<SegmentInfo
     clearTimeout(timeout);
 
     if (!response.ok) {
-      console.warn(`Failed to fetch manifest: ${response.status} ${response.statusText}`);
       return [];
     }
 
     const manifest = await response.text();
-    
+
     // Parse M3U8 manifest
     const lines = manifest.split('\n');
     const segments: SegmentInfo[] = [];
     let currentStart = 0;
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
-      
+
       // Look for segment duration
       if (line.startsWith('#EXTINF:')) {
         const duration = parseFloat(line.substring(8));
         const url = lines[i + 1]?.trim();
-        
+
         if (url && !url.startsWith('#')) {
           segments.push({
             url: url,
             start: currentStart,
             end: currentStart + duration,
             duration: duration,
-            size: 0, // Will be fetched later
-            bitrate: 0 // Will be calculated later
+            size: 0,
+            bitrate: 0
           });
-          
+
           currentStart += duration;
         }
       }
     }
-    
+
     return segments;
   } catch (error: any) {
-    if (error instanceof DOMException && error.name === 'AbortError') {
-      console.warn('HLS manifest fetch timed out');
-    } else if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-      console.warn('CORS or network error fetching HLS manifest');
-    } else {
-      console.warn('Failed to fetch HLS segments:', error?.message || error);
-    }
     return [];
   }
 };

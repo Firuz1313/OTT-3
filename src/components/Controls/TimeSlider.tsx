@@ -64,8 +64,6 @@ const TimeSlider: React.FC<TimeSliderProps> = ({
             max={duration || 100}
             value={currentTime}
             onChange={handleSeek}
-            onMouseMove={onMouseMove}
-            onMouseLeave={onMouseLeave}
           />
           
           <div 

@@ -9,7 +9,16 @@ export interface SegmentInfo {
 
 export const fetchHlsSegments = async (manifestUrl: string): Promise<SegmentInfo[]> => {
   try {
-    const response = await fetch(manifestUrl);
+    const response = await fetch(manifestUrl, {
+      method: 'GET',
+      headers: { 'Accept': 'application/vnd.apple.mpegurl, application/x-mpegURL' }
+    });
+
+    if (!response.ok) {
+      console.warn(`Failed to fetch manifest: ${response.status} ${response.statusText}`);
+      return [];
+    }
+
     const manifest = await response.text();
     
     // Parse M3U8 manifest
@@ -40,23 +49,13 @@ export const fetchHlsSegments = async (manifestUrl: string): Promise<SegmentInfo
       }
     }
     
-    // Fetch segment sizes
-    await Promise.all(segments.map(async (segment) => {
-      try {
-        const response = await fetch(segment.url, { method: 'HEAD' });
-        const contentLength = response.headers.get('content-length');
-        if (contentLength) {
-          segment.size = parseInt(contentLength, 10);
-          segment.bitrate = Math.round((segment.size * 8) / segment.duration);
-        }
-      } catch (error) {
-        console.warn('Failed to fetch segment size:', error);
-      }
-    }));
-    
     return segments;
-  } catch (error) {
-    console.error('Failed to fetch HLS segments:', error);
+  } catch (error: any) {
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      console.warn('CORS error or network error fetching HLS manifest - segment visualization disabled');
+    } else {
+      console.warn('Failed to fetch HLS segments:', error);
+    }
     return [];
   }
 };

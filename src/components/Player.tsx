@@ -59,7 +59,7 @@ export interface PlayerAPI {
 }
 
 const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
-  const { src, type = 'auto', subtitles = [], playlist } = props;
+  const { src, type = 'auto', subtitles = [], playlist, autoplay = false } = props;
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);

@@ -374,7 +374,7 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
   };
 
   // Fetch segments for visualization
-  const fetchSegments = async (source: string, streamType: string) => {
+  const fetchSegments = async (source: string, streamType: string): Promise<void> => {
     try {
       let segmentData: any[] = [];
 
@@ -392,7 +392,7 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
   };
 
   // Generate thumbnails using FFmpeg
-  const generateVideoThumbnails = async (source: string) => {
+  const generateVideoThumbnails = async (source: string): Promise<void> => {
     try {
       const mockThumbnails: string[] = [];
       for (let i = 0; i < 5; i++) {
@@ -493,11 +493,15 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       }
     }
 
-    // Fetch segments for visualization
-    fetchSegments(currentSrc, detectedType);
-    
-    // Generate thumbnails
-    generateVideoThumbnails(currentSrc);
+    // Fetch segments for visualization (wrapped in promise handler)
+    fetchSegments(currentSrc, detectedType).catch(() => {
+      setSegments([]);
+    });
+
+    // Generate thumbnails (wrapped in promise handler)
+    generateVideoThumbnails(currentSrc).catch(() => {
+      setThumbnails([]);
+    });
 
     // Initialize appropriate engine
     if (detectedType === 'hls') {

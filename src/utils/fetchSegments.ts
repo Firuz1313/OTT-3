@@ -70,7 +70,20 @@ export const fetchHlsSegments = async (manifestUrl: string): Promise<SegmentInfo
 
 export const fetchDashSegments = async (manifestUrl: string): Promise<SegmentInfo[]> => {
   try {
-    const response = await fetch(manifestUrl);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
+    const response = await fetch(manifestUrl, {
+      signal: controller.signal
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      console.warn(`Failed to fetch DASH manifest: ${response.status} ${response.statusText}`);
+      return [];
+    }
+
     const manifest = await response.text();
     
     // Parse MPD manifest (simplified)
@@ -101,8 +114,14 @@ export const fetchDashSegments = async (manifestUrl: string): Promise<SegmentInf
     }
     
     return segments;
-  } catch (error) {
-    console.error('Failed to fetch DASH segments:', error);
+  } catch (error: any) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      console.warn('DASH manifest fetch timed out');
+    } else if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      console.warn('CORS or network error fetching DASH manifest');
+    } else {
+      console.warn('Failed to fetch DASH segments:', error?.message || error);
+    }
     return [];
   }
 };

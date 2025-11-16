@@ -376,16 +376,17 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
   const fetchSegments = async (source: string, streamType: string) => {
     try {
       let segmentData: any[] = [];
-      
+
       if (streamType === 'hls') {
         segmentData = await fetchHlsSegments(source);
       } else if (streamType === 'dash') {
         segmentData = await fetchDashSegments(source);
       }
-      
+
       setSegments(segmentData);
     } catch (error) {
-      console.error('Failed to fetch segments:', error);
+      console.warn('Segment visualization unavailable:', error);
+      setSegments([]);
     }
   };
 

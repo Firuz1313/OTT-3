@@ -7,6 +7,19 @@ const DemoPage: React.FC = () => {
   const playerRef = React.useRef<any>(null);
   const [customUrl, setCustomUrl] = React.useState('');
   const [currentUrl, setCurrentUrl] = React.useState('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+  const [autoPlay, setAutoPlay] = React.useState(true);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlParam = params.get('url');
+    
+    if (urlParam) {
+      const decodedUrl = decodeURIComponent(urlParam);
+      setCurrentUrl(decodedUrl);
+      setCustomUrl(decodedUrl);
+      setAutoPlay(true);
+    }
+  }, []);
 
   const samplePlaylist = {
     items: [
@@ -46,6 +59,7 @@ const DemoPage: React.FC = () => {
   const handleLoadUrl = () => {
     if (customUrl.trim()) {
       setCurrentUrl(customUrl.trim());
+      setAutoPlay(true);
     }
   };
 
@@ -83,6 +97,8 @@ const DemoPage: React.FC = () => {
             src={currentUrl}
             playlist={samplePlaylist}
             subtitles={sampleSubtitles}
+            autoplay={autoPlay}
+            key={currentUrl}
           />
         </div>
       </div>

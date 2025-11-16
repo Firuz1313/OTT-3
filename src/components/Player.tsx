@@ -492,15 +492,11 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       }
     }
 
-    // Fetch segments for visualization (wrapped in promise handler)
-    fetchSegments(currentSrc, detectedType).catch(() => {
-      setSegments([]);
-    });
+    // Fetch segments for visualization
+    fetchSegments(currentSrc, detectedType);
 
-    // Generate thumbnails (wrapped in promise handler)
-    generateVideoThumbnails(currentSrc).catch(() => {
-      setThumbnails([]);
-    });
+    // Generate thumbnails
+    generateVideoThumbnails(currentSrc);
 
     // Initialize appropriate engine
     if (detectedType === 'hls') {

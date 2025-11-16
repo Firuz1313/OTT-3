@@ -384,12 +384,12 @@
 }
 
 .selector-button {
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
   font-size: 13px;
   cursor: pointer;
-  padding: 4px 6px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -397,10 +397,12 @@
   height: 36px;
   min-width: auto;
   white-space: nowrap;
+  border-radius: 4px;
 }
 
 .selector-button:hover {
-  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
 }
 
 .selector-menu {

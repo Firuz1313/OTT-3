@@ -17,9 +17,6 @@
   letter-spacing: -0.5px;
 }
 
-.demo-page > div[style*="color: red"] {
-  display: none !important;
-}
 
 .player-section {
   margin-bottom: 60px;

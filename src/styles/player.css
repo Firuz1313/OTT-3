@@ -95,7 +95,7 @@
 }
 
 .play-button {
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
   font-size: 28px;
@@ -108,10 +108,12 @@
   flex-shrink: 0;
   height: 36px;
   width: 36px;
+  border-radius: 4px;
 }
 
 .play-button:hover {
-  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
 }
 
 .play-button:active {

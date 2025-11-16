@@ -44,14 +44,7 @@ const DemoPage: React.FC = () => {
     currentIndex: 0
   };
 
-  const sampleSubtitles = [
-    {
-      id: 'en',
-      label: 'English',
-      language: 'en',
-      src: 'https://example.com/subtitles-en.vtt'
-    }
-  ];
+  const sampleSubtitles: { id: string; label: string; language: string; src: string }[] = [];
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomUrl(e.target.value);

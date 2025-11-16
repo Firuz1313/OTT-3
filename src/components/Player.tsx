@@ -23,6 +23,7 @@ interface PlayerProps {
   src: string;
   type?: 'hls' | 'dash' | 'auto';
   subtitles?: { id: string; label: string; language: string; src: string }[];
+  autoplay?: boolean;
   playlist?: {
     items: {
       id: string;
@@ -59,7 +60,7 @@ export interface PlayerAPI {
 }
 
 const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
-  const { src, type = 'auto', subtitles = [], playlist } = props;
+  const { src, type = 'auto', subtitles = [], playlist, autoplay = false } = props;
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -373,35 +374,34 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
   };
 
   // Fetch segments for visualization
-  const fetchSegments = async (source: string, streamType: string) => {
+  const fetchSegments = async (source: string, streamType: string): Promise<void> => {
     try {
       let segmentData: any[] = [];
-      
+
       if (streamType === 'hls') {
         segmentData = await fetchHlsSegments(source);
       } else if (streamType === 'dash') {
         segmentData = await fetchDashSegments(source);
       }
-      
+
       setSegments(segmentData);
     } catch (error) {
-      console.error('Failed to fetch segments:', error);
+      console.warn('Segment visualization unavailable:', error);
+      setSegments([]);
     }
   };
 
   // Generate thumbnails using FFmpeg
-  const generateVideoThumbnails = async (source: string) => {
+  const generateVideoThumbnails = async (source: string): Promise<void> => {
     try {
-      // In a real implementation, we would fetch the video file
-      // For now, we'll generate mock thumbnails
       const mockThumbnails: string[] = [];
       for (let i = 0; i < 5; i++) {
-        // Create a mock thumbnail URL
         mockThumbnails.push(`https://picsum.photos/320/180?random=${i}`);
       }
       setThumbnails(mockThumbnails);
     } catch (error) {
-      console.error('Failed to generate thumbnails:', error);
+      console.warn('Thumbnail generation skipped:', error);
+      setThumbnails([]);
     }
   };
 
@@ -493,20 +493,25 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       }
     }
 
-    // Fetch segments for visualization
-    fetchSegments(currentSrc, detectedType);
-    
-    // Generate thumbnails
-    generateVideoThumbnails(currentSrc);
+    // Fetch segments for visualization (wrapped in promise handler)
+    fetchSegments(currentSrc, detectedType).catch(() => {
+      setSegments([]);
+    });
+
+    // Generate thumbnails (wrapped in promise handler)
+    generateVideoThumbnails(currentSrc).catch(() => {
+      setThumbnails([]);
+    });
 
     // Initialize appropriate engine
-    if (detectedType === 'hls' && Hls.isSupported()) {
-      hlsEngineRef.current = new HlsEngine();
-      hlsEngineRef.current.loadSource(currentSrc, video);
-    } else if (detectedType === 'hls' && Hls.isSupported()) {
-      hlsRef.current = new Hls();
-      hlsRef.current.loadSource(currentSrc);
-      hlsRef.current.attachMedia(video);
+    if (detectedType === 'hls') {
+      if (Hls.isSupported()) {
+        hlsEngineRef.current = new HlsEngine();
+        hlsEngineRef.current.loadSource(currentSrc, video);
+      } else {
+        // Fallback to native HLS support (Safari)
+        video.src = currentSrc;
+      }
     } else if (detectedType === 'dash') {
       dashRef.current = dashjs.MediaPlayer().create();
       dashRef.current.initialize(video, currentSrc, false);
@@ -525,6 +530,16 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       track.id = subtitle.id;
       video.appendChild(track);
     });
+
+    // Auto-play if enabled
+    if (autoplay) {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+          console.warn('Autoplay failed:', error);
+        });
+      }
+    }
 
     return () => {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
@@ -560,7 +575,7 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
         dashRef.current.destroy();
       }
     };
-  }, [src, type, subtitles, playlist, currentPlaylistIndex]);
+  }, [src, type, subtitles, playlist, currentPlaylistIndex, autoplay]);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -792,10 +807,11 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
 
   return (
     <div className={getPlayerClass()}>
-      <video 
-        ref={videoRef} 
+      <video
+        ref={videoRef}
         className="video-element"
         playsInline
+        autoPlay={autoplay}
         src={getCurrentSource()}
         onLoadStart={() => console.log('Video load started')}
         onLoadedData={() => console.log('Video data loaded')}

@@ -5,18 +5,32 @@ import VideoProcessorDemo from './components/FFmpeg/VideoProcessorDemo';
 
 const DemoPage: React.FC = () => {
   const playerRef = React.useRef<any>(null);
-  const [customUrl, setCustomUrl] = React.useState('');
-  const [currentUrl, setCurrentUrl] = React.useState('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+  const defaultVideoUrl = 'http://ant-tv.ddns.net/vod/hls/lun4/KINOTK/Ona.skazala.mojet.bit.2025.WEB-DL.1080p/master.m3u8';
+  const [customUrl, setCustomUrl] = React.useState(defaultVideoUrl);
+  const [currentUrl, setCurrentUrl] = React.useState(defaultVideoUrl);
+  const [autoPlay, setAutoPlay] = React.useState(true);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlParam = params.get('url');
+    
+    if (urlParam) {
+      const decodedUrl = decodeURIComponent(urlParam);
+      setCurrentUrl(decodedUrl);
+      setCustomUrl(decodedUrl);
+      setAutoPlay(true);
+    }
+  }, []);
 
   const samplePlaylist = {
     items: [
       {
         id: '1',
-        title: 'Sample Video 1',
-        url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+        title: 'Она сказала может быть (2025)',
+        url: 'http://ant-tv.ddns.net/vod/hls/lun4/KINOTK/Ona.skazala.mojet.bit.2025.WEB-DL.1080p/master.m3u8',
         type: 'hls' as const,
         thumbnail: 'https://example.com/thumb1.jpg',
-        duration: 120
+        duration: 0
       },
       {
         id: '2',
@@ -46,6 +60,7 @@ const DemoPage: React.FC = () => {
   const handleLoadUrl = () => {
     if (customUrl.trim()) {
       setCurrentUrl(customUrl.trim());
+      setAutoPlay(true);
     }
   };
 
@@ -83,6 +98,8 @@ const DemoPage: React.FC = () => {
             src={currentUrl}
             playlist={samplePlaylist}
             subtitles={sampleSubtitles}
+            autoplay={autoPlay}
+            key={currentUrl}
           />
         </div>
       </div>

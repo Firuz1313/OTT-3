@@ -499,13 +499,14 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
     generateVideoThumbnails(currentSrc);
 
     // Initialize appropriate engine
-    if (detectedType === 'hls' && Hls.isSupported()) {
-      hlsEngineRef.current = new HlsEngine();
-      hlsEngineRef.current.loadSource(currentSrc, video);
-    } else if (detectedType === 'hls' && Hls.isSupported()) {
-      hlsRef.current = new Hls();
-      hlsRef.current.loadSource(currentSrc);
-      hlsRef.current.attachMedia(video);
+    if (detectedType === 'hls') {
+      if (Hls.isSupported()) {
+        hlsEngineRef.current = new HlsEngine();
+        hlsEngineRef.current.loadSource(currentSrc, video);
+      } else {
+        // Fallback to native HLS support (Safari)
+        video.src = currentSrc;
+      }
     } else if (detectedType === 'dash') {
       dashRef.current = dashjs.MediaPlayer().create();
       dashRef.current.initialize(video, currentSrc, false);

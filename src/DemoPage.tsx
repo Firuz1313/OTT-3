@@ -26,8 +26,8 @@ const DemoPage: React.FC = () => {
     items: [
       {
         id: '1',
-        title: 'Она сказала может быть (2025)',
-        url: 'http://ant-tv.ddns.net/vod/hls/lun4/KINOTK/Ona.skazala.mojet.bit.2025.WEB-DL.1080p/master.m3u8',
+        title: 'Big Buck Bunny',
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.m3u8',
         type: 'hls' as const,
         thumbnail: 'https://example.com/thumb1.jpg',
         duration: 0

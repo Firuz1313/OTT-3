@@ -5,7 +5,7 @@ import VideoProcessorDemo from './components/FFmpeg/VideoProcessorDemo';
 
 const DemoPage: React.FC = () => {
   const playerRef = React.useRef<any>(null);
-  const defaultVideoUrl = 'http://ant-tv.ddns.net/vod/hls/lun4/KINOTK/Ona.skazala.mojet.bit.2025.WEB-DL.1080p/master.m3u8';
+  const defaultVideoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.m3u8';
   const [customUrl, setCustomUrl] = React.useState(defaultVideoUrl);
   const [currentUrl, setCurrentUrl] = React.useState(defaultVideoUrl);
   const [autoPlay, setAutoPlay] = React.useState(true);

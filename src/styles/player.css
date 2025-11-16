@@ -51,9 +51,6 @@
   opacity: 1;
 }
 
-.player-header-button:hover {
-  transform: scale(1.1);
-}
 
 .video-element {
   width: 100%;

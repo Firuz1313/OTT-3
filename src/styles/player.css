@@ -354,7 +354,7 @@
 }
 
 .controls-button {
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
   font-size: 16px;
@@ -367,10 +367,12 @@
   height: 36px;
   width: 36px;
   position: relative;
+  border-radius: 4px;
 }
 
 .controls-button:hover {
-  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
 }
 
 .controls-button:active {

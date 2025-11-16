@@ -71,7 +71,10 @@ export const fetchDashSegments = (manifestUrl: string): Promise<SegmentInfo[]> =
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 5000);
 
-      const response = await fetch(manifestUrl, {
+      const isExternal = manifestUrl.startsWith('http');
+      const proxyUrl = isExternal ? `/proxy/${encodeURIComponent(manifestUrl)}` : manifestUrl;
+
+      const response = await fetch(proxyUrl, {
         signal: controller.signal
       });
 

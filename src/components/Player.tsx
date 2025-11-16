@@ -530,7 +530,10 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise.catch((error) => {
-          console.warn('Autoplay failed:', error);
+          // Ignore AbortError - it means play was interrupted by pause
+          if (error.name !== 'AbortError') {
+            console.warn('Autoplay failed:', error);
+          }
         });
       }
     }

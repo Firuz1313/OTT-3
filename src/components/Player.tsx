@@ -803,10 +803,11 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
 
   return (
     <div className={getPlayerClass()}>
-      <video 
-        ref={videoRef} 
+      <video
+        ref={videoRef}
         className="video-element"
         playsInline
+        autoPlay={autoplay}
         src={getCurrentSource()}
         onLoadStart={() => console.log('Video load started')}
         onLoadedData={() => console.log('Video data loaded')}

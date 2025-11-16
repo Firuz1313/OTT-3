@@ -9,10 +9,16 @@ export interface SegmentInfo {
 
 export const fetchHlsSegments = async (manifestUrl: string): Promise<SegmentInfo[]> => {
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
     const response = await fetch(manifestUrl, {
       method: 'GET',
-      headers: { 'Accept': 'application/vnd.apple.mpegurl, application/x-mpegURL' }
+      headers: { 'Accept': 'application/vnd.apple.mpegurl, application/x-mpegURL' },
+      signal: controller.signal
     });
+
+    clearTimeout(timeout);
 
     if (!response.ok) {
       console.warn(`Failed to fetch manifest: ${response.status} ${response.statusText}`);
@@ -51,10 +57,12 @@ export const fetchHlsSegments = async (manifestUrl: string): Promise<SegmentInfo
     
     return segments;
   } catch (error: any) {
-    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-      console.warn('CORS error or network error fetching HLS manifest - segment visualization disabled');
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      console.warn('HLS manifest fetch timed out');
+    } else if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      console.warn('CORS or network error fetching HLS manifest');
     } else {
-      console.warn('Failed to fetch HLS segments:', error);
+      console.warn('Failed to fetch HLS segments:', error?.message || error);
     }
     return [];
   }

@@ -13,10 +13,7 @@ export const fetchHlsSegments = (manifestUrl: string): Promise<SegmentInfo[]> =>
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 5000);
 
-      const isExternal = manifestUrl.startsWith('http');
-      const proxyUrl = isExternal ? `/proxy/${encodeURIComponent(manifestUrl)}` : manifestUrl;
-
-      const response = await fetch(proxyUrl, {
+      const response = await fetch(manifestUrl, {
         method: 'GET',
         headers: { 'Accept': 'application/vnd.apple.mpegurl, application/x-mpegURL' },
         signal: controller.signal

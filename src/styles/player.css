@@ -486,7 +486,7 @@
 .playlist-button,
 .view-mode-button,
 .fullscreen-button {
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
   font-size: 18px;
@@ -498,6 +498,7 @@
   transition: all 0.2s ease;
   height: 36px;
   width: 36px;
+  border-radius: 4px;
 }
 
 .stats-button:hover,
@@ -505,7 +506,8 @@
 .playlist-button:hover,
 .view-mode-button:hover,
 .fullscreen-button:hover {
-  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
 }
 
 .stats-button:active,

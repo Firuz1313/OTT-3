@@ -804,6 +804,19 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
 
   return (
     <div className={getPlayerClass()}>
+      <div className="player-header">
+        <span className="player-header-text">Made at Theorem with love</span>
+        <button
+          className="player-header-button"
+          title="More information"
+          onClick={() => setIsStatsVisible(true)}
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+        </button>
+      </div>
+
       <video
         ref={videoRef}
         className="video-element"
@@ -814,11 +827,9 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
         onLoadedData={() => console.log('Video data loaded')}
         onError={(e) => console.log('Video error:', e)}
       />
-      
+
       <div className="player-controls visible">
-        <PlayButton isPlaying={isPlaying} onClick={togglePlay} />
-        
-        <TimeSlider 
+        <TimeSlider
           currentTime={currentTime}
           duration={duration}
           bufferedRanges={bufferedRanges}
@@ -826,69 +837,96 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
           onMouseMove={handleTimeSliderMouseMove}
           onMouseLeave={handleTimeSliderMouseLeave}
         />
-        
-        <Volume 
-          volume={volume}
-          isMuted={isMuted}
-          onVolumeChange={handleVolumeChange}
-          onToggleMute={toggleMute}
-        />
-        
-        <QualitySelector 
-          options={qualityOptions}
-          currentValue={isAutoQuality ? -1 : 0}
-          onChange={handleQualityChange}
-        />
-        
-        <button 
-          className={`auto-quality-button ${isAutoQuality ? 'active' : ''}`}
-          onClick={toggleAutoQuality}
-        >
-          ABR
-        </button>
-        
-        <SpeedSelector 
-          currentValue={playbackRate}
-          onChange={handlePlaybackRateChange}
-        />
-        
-        {subtitles.length > 0 && (
-          <SubtitlesSelector 
-            tracks={subtitles}
-            activeTrackId={activeSubtitle}
-            onChange={handleSubtitleChange}
+
+        <div className="controls-left">
+          <PlayButton isPlaying={isPlaying} onClick={togglePlay} />
+
+          <Volume
+            volume={volume}
+            isMuted={isMuted}
+            onVolumeChange={handleVolumeChange}
+            onToggleMute={toggleMute}
           />
-        )}
-        
-        <button className="stats-button" onClick={() => setIsStatsVisible(true)}>
-          Stats
-        </button>
-        
-        {playlist && playlist.items.length > 0 && (
-          <button className="playlist-button" onClick={() => setIsPlaylistVisible(true)}>
-            Playlist
+        </div>
+
+        <div className="controls-right">
+          {subtitles.length > 0 && (
+            <SubtitlesSelector
+              tracks={subtitles}
+              activeTrackId={activeSubtitle}
+              onChange={handleSubtitleChange}
+            />
+          )}
+
+          <SpeedSelector
+            currentValue={playbackRate}
+            onChange={handlePlaybackRateChange}
+          />
+
+          <QualitySelector
+            options={qualityOptions}
+            currentValue={isAutoQuality ? -1 : 0}
+            onChange={handleQualityChange}
+          />
+
+          {playlist && playlist.items.length > 0 && (
+            <button
+              className="controls-button"
+              onClick={() => setIsPlaylistVisible(true)}
+              title="Playlist"
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
+              </svg>
+            </button>
+          )}
+
+          <button
+            className="controls-button"
+            onClick={() => setIsStatsVisible(true)}
+            title="Stats for nerds"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z" />
+            </svg>
           </button>
-        )}
-        
-        <button className="pip-button" onClick={togglePictureInPicture}>
-          {isPictureInPicture ? 'Exit PiP' : 'PiP'}
-        </button>
-        
-        <button className="view-mode-button" onClick={toggleTheaterMode}>
-          {viewMode === 'theater' ? 'Normal' : 'Theater'}
-        </button>
-        
-        <button className="view-mode-button" onClick={toggleCinemaMode}>
-          {viewMode === 'cinema' ? 'Normal' : 'Cinema'}
-        </button>
-        
-        <button className="view-mode-button" onClick={toggleMiniPlayer}>
-          {viewMode === 'mini' ? 'Normal' : 'Mini'}
-        </button>
-        
-        <button className="fullscreen-button" onClick={toggleFullscreen}>
-          {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-        </button>
+
+          <button
+            className="controls-button"
+            onClick={togglePictureInPicture}
+            title={isPictureInPicture ? "Exit Picture in Picture" : "Picture in Picture"}
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M19 7h-8v6h8V7zm2-4H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z" />
+            </svg>
+          </button>
+
+          <button
+            className="controls-button"
+            onClick={toggleTheaterMode}
+            title={viewMode === 'theater' ? "Exit theater mode" : "Theater mode"}
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 12H4V6h16v10z" />
+            </svg>
+          </button>
+
+          <button
+            className="controls-button"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+          >
+            {isFullscreen ? (
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
       
       <SegmentVisualization

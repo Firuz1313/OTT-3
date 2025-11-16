@@ -23,7 +23,6 @@ const TimeSlider: React.FC<TimeSliderProps> = ({
     onSeek(time);
   };
 
-  // Calculate buffer percentage for visualization
   const getBufferedPercentages = (): { start: number; end: number }[] => {
     if (!bufferedRanges || bufferedRanges.length === 0) return [];
     
@@ -38,45 +37,44 @@ const TimeSlider: React.FC<TimeSliderProps> = ({
 
   return (
     <div className="time-slider-container">
-      <input
-        type="range"
-        className="time-slider"
-        min="0"
-        max={duration || 100}
-        value={currentTime}
-        onChange={handleSeek}
-      />
+      <span className="current-time">{formatTime(currentTime)}</span>
       
-      {/* Buffer visualization */}
-      <div className="buffered-ranges">
-        {bufferedPercentages.map((range, index) => (
-          <div
-            key={index}
-            className="buffered-range"
-            style={{
-              left: `${range.start}%`,
-              width: `${range.end - range.start}%`
-            }}
+      <div className="time-slider-wrapper">
+        <div className="time-slider-track">
+          {bufferedPercentages.map((range, index) => (
+            <div
+              key={index}
+              className="buffered-range"
+              style={{
+                left: `${range.start}%`,
+                width: `${range.end - range.start}%`
+              }}
+            />
+          ))}
+          
+          <div 
+            className="progress-indicator"
+            style={{ width: `${progressPercentage}%` }}
           />
-        ))}
+          
+          <input
+            type="range"
+            className="time-slider"
+            min="0"
+            max={duration || 100}
+            value={currentTime}
+            onChange={handleSeek}
+          />
+          
+          <div 
+            className="time-slider-overlay"
+            onMouseMove={onMouseMove}
+            onMouseLeave={onMouseLeave}
+          />
+        </div>
       </div>
       
-      {/* Progress indicator */}
-      <div 
-        className="progress-indicator"
-        style={{ width: `${progressPercentage}%` }}
-      />
-      
-      <div 
-        className="time-slider-overlay"
-        onMouseMove={onMouseMove}
-        onMouseLeave={onMouseLeave}
-      />
-      
-      <div className="time-display">
-        <span className="current-time">{formatTime(currentTime)}</span>
-        <span className="duration-time">{formatTime(duration)}</span>
-      </div>
+      <span className="duration-time">{formatTime(duration)}</span>
     </div>
   );
 };

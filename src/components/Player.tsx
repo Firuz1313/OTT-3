@@ -379,9 +379,9 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       let segmentData: any[] = [];
 
       if (streamType === 'hls') {
-        segmentData = await fetchHlsSegments(source);
+        segmentData = await fetchHlsSegments(source).catch(() => []);
       } else if (streamType === 'dash') {
-        segmentData = await fetchDashSegments(source);
+        segmentData = await fetchDashSegments(source).catch(() => []);
       }
 
       setSegments(segmentData);

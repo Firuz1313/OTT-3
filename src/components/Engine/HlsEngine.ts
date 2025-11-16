@@ -20,7 +20,6 @@ export class HlsEngine {
   loadSource(url: string, videoElement: HTMLVideoElement): void {
     if (this.hls) {
       this.videoElement = videoElement;
-      // If URL is HTTP and page is HTTPS, convert to HTTPS
       const proxiedUrl = this.getProxiedUrl(url);
       this.hls.loadSource(proxiedUrl);
       this.hls.attachMedia(videoElement);
@@ -32,11 +31,9 @@ export class HlsEngine {
   }
 
   private getProxiedUrl(url: string): string {
-    // If page is HTTPS but URL is HTTP, convert to HTTPS or use proxy
+    // If page is HTTPS but URL is HTTP, route through proxy to avoid mixed content
     if (window.location.protocol === 'https:' && url.startsWith('http://')) {
-      // Try converting to HTTPS first
-      const httpsUrl = url.replace('http://', 'https://');
-      return httpsUrl;
+      return `/proxy/${encodeURIComponent(url)}`;
     }
     return url;
   }

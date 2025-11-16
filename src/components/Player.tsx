@@ -23,6 +23,7 @@ interface PlayerProps {
   src: string;
   type?: 'hls' | 'dash' | 'auto';
   subtitles?: { id: string; label: string; language: string; src: string }[];
+  autoplay?: boolean;
   playlist?: {
     items: {
       id: string;

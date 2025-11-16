@@ -527,6 +527,16 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       video.appendChild(track);
     });
 
+    // Auto-play if enabled
+    if (autoplay) {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+          console.warn('Autoplay failed:', error);
+        });
+      }
+    }
+
     return () => {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       video.removeEventListener('timeupdate', handleTimeUpdate);
@@ -561,7 +571,7 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
         dashRef.current.destroy();
       }
     };
-  }, [src, type, subtitles, playlist, currentPlaylistIndex]);
+  }, [src, type, subtitles, playlist, currentPlaylistIndex, autoplay]);
 
   const togglePlay = () => {
     if (!videoRef.current) return;

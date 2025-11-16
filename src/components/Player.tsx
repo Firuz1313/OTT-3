@@ -492,11 +492,10 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       }
     }
 
-    // Fetch segments for visualization (non-critical feature, silently fail)
-    fetchSegments(currentSrc, detectedType).catch(() => {});
-
-    // Generate thumbnails
-    generateVideoThumbnails(currentSrc).catch(() => {});
+    // Segment visualization disabled - non-critical feature that was causing proxy issues
+    // If needed, segments and thumbnails can be enabled by uncommenting below
+    // await fetchSegments(currentSrc, detectedType).catch(() => {});
+    // await generateVideoThumbnails(currentSrc).catch(() => {});
 
     // Initialize appropriate engine
     if (detectedType === 'hls') {

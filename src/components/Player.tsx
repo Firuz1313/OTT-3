@@ -379,14 +379,13 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       let segmentData: any[] = [];
 
       if (streamType === 'hls') {
-        segmentData = await fetchHlsSegments(source);
+        segmentData = await fetchHlsSegments(source).catch(() => []);
       } else if (streamType === 'dash') {
-        segmentData = await fetchDashSegments(source);
+        segmentData = await fetchDashSegments(source).catch(() => []);
       }
 
       setSegments(segmentData);
-    } catch (error) {
-      console.warn('Segment visualization unavailable:', error);
+    } catch {
       setSegments([]);
     }
   };
@@ -493,15 +492,10 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       }
     }
 
-    // Fetch segments for visualization (wrapped in promise handler)
-    fetchSegments(currentSrc, detectedType).catch(() => {
-      setSegments([]);
-    });
-
-    // Generate thumbnails (wrapped in promise handler)
-    generateVideoThumbnails(currentSrc).catch(() => {
-      setThumbnails([]);
-    });
+    // Segment visualization disabled - non-critical feature that was causing proxy issues
+    // If needed, segments and thumbnails can be enabled by uncommenting below
+    // await fetchSegments(currentSrc, detectedType).catch(() => {});
+    // await generateVideoThumbnails(currentSrc).catch(() => {});
 
     // Initialize appropriate engine
     if (detectedType === 'hls') {
@@ -536,7 +530,10 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise.catch((error) => {
-          console.warn('Autoplay failed:', error);
+          // Ignore AbortError - it means play was interrupted by pause
+          if (error.name !== 'AbortError') {
+            console.warn('Autoplay failed:', error);
+          }
         });
       }
     }

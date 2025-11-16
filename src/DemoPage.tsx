@@ -5,7 +5,7 @@ import VideoProcessorDemo from './components/FFmpeg/VideoProcessorDemo';
 
 const DemoPage: React.FC = () => {
   const playerRef = React.useRef<any>(null);
-  const defaultVideoUrl = 'http://ant-tv.ddns.net/vod/hls/lun4/KINOTK/Ona.skazala.mojet.bit.2025.WEB-DL.1080p/master.m3u8';
+  const defaultVideoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
   const [customUrl, setCustomUrl] = React.useState(defaultVideoUrl);
   const [currentUrl, setCurrentUrl] = React.useState(defaultVideoUrl);
   const [autoPlay, setAutoPlay] = React.useState(true);
@@ -26,11 +26,11 @@ const DemoPage: React.FC = () => {
     items: [
       {
         id: '1',
-        title: 'Она сказала может быть (2025)',
-        url: 'http://ant-tv.ddns.net/vod/hls/lun4/KINOTK/Ona.skazala.mojet.bit.2025.WEB-DL.1080p/master.m3u8',
-        type: 'hls' as const,
+        title: 'Big Buck Bunny',
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        type: 'mp4' as const,
         thumbnail: 'https://example.com/thumb1.jpg',
-        duration: 0
+        duration: 596
       },
       {
         id: '2',
@@ -44,14 +44,7 @@ const DemoPage: React.FC = () => {
     currentIndex: 0
   };
 
-  const sampleSubtitles = [
-    {
-      id: 'en',
-      label: 'English',
-      language: 'en',
-      src: 'https://example.com/subtitles-en.vtt'
-    }
-  ];
+  const sampleSubtitles: { id: string; label: string; language: string; src: string }[] = [];
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomUrl(e.target.value);

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface SubtitleTrack {
   id: string;
@@ -19,21 +20,65 @@ const SubtitlesSelector: React.FC<SubtitlesSelectorProps> = ({
   activeTrackId, 
   onChange 
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const currentOption = activeTrackId 
+    ? tracks.find(track => track.id === activeTrackId)
+    : null;
+  const displayLabel = currentOption ? 'Captions' : 'Captions';
+
   return (
-    <div className="subtitles-selector">
-      <label htmlFor="subtitles-select">Subtitles:</label>
-      <select 
-        id="subtitles-select"
-        value={activeTrackId || ''}
-        onChange={(e) => onChange(e.target.value || null)}
+    <div className="subtitles-selector" ref={menuRef}>
+      <button
+        className="selector-button"
+        onClick={() => setIsOpen(!isOpen)}
+        title="Captions and subtitles"
       >
-        <option value="">Off</option>
+        {displayLabel}
+      </button>
+      <div className={`selector-menu ${isOpen ? 'active' : ''}`}>
+        <div
+          className={`selector-menu-item ${!activeTrackId ? 'active' : ''}`}
+          onClick={() => {
+            onChange(null);
+            setIsOpen(false);
+          }}
+        >
+          <span className="selector-menu-item-checkmark">
+            {!activeTrackId ? '✓' : ''}
+          </span>
+          <span>Off</span>
+        </div>
         {tracks.map((track) => (
-          <option key={track.id} value={track.id}>
-            {track.label} {track.language && `(${track.language})`}
-          </option>
+          <div
+            key={track.id}
+            className={`selector-menu-item ${track.id === activeTrackId ? 'active' : ''}`}
+            onClick={() => {
+              onChange(track.id);
+              setIsOpen(false);
+            }}
+          >
+            <span className="selector-menu-item-checkmark">
+              {track.id === activeTrackId ? '✓' : ''}
+            </span>
+            <span>
+              {track.label} {track.language && `(${track.language})`}
+            </span>
+          </div>
         ))}
-      </select>
+      </div>
     </div>
   );
 };

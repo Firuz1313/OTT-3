@@ -72,26 +72,25 @@ export const fetchDashSegments = async (manifestUrl: string): Promise<SegmentInf
     clearTimeout(timeout);
 
     if (!response.ok) {
-      console.warn(`Failed to fetch DASH manifest: ${response.status} ${response.statusText}`);
       return [];
     }
 
     const manifest = await response.text();
-    
+
     // Parse MPD manifest (simplified)
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(manifest, 'text/xml');
-    
+
     const segments: SegmentInfo[] = [];
     const segmentTemplates = xmlDoc.getElementsByTagName('SegmentTemplate');
-    
+
     // This is a simplified implementation
     // In a real implementation, we would need to parse the MPD structure properly
     for (let i = 0; i < segmentTemplates.length; i++) {
       const template = segmentTemplates[i];
       const timescale = parseInt(template.getAttribute('timescale') || '1', 10);
       const duration = parseInt(template.getAttribute('duration') || '0', 10);
-      
+
       if (duration > 0 && timescale > 0) {
         const segmentDuration = duration / timescale;
         segments.push({
@@ -104,16 +103,9 @@ export const fetchDashSegments = async (manifestUrl: string): Promise<SegmentInf
         });
       }
     }
-    
+
     return segments;
   } catch (error: any) {
-    if (error instanceof DOMException && error.name === 'AbortError') {
-      console.warn('DASH manifest fetch timed out');
-    } else if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-      console.warn('CORS or network error fetching DASH manifest');
-    } else {
-      console.warn('Failed to fetch DASH segments:', error?.message || error);
-    }
     return [];
   }
 };

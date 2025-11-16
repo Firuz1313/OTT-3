@@ -62,54 +62,56 @@ export const fetchHlsSegments = (manifestUrl: string): Promise<SegmentInfo[]> =>
   })();
 };
 
-export const fetchDashSegments = async (manifestUrl: string): Promise<SegmentInfo[]> => {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+export const fetchDashSegments = (manifestUrl: string): Promise<SegmentInfo[]> => {
+  return (async () => {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
 
-    const response = await fetch(manifestUrl, {
-      signal: controller.signal
-    });
+      const response = await fetch(manifestUrl, {
+        signal: controller.signal
+      });
 
-    clearTimeout(timeout);
+      clearTimeout(timeout);
 
-    if (!response.ok) {
+      if (!response.ok) {
+        return [];
+      }
+
+      const manifest = await response.text();
+
+      // Parse MPD manifest (simplified)
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(manifest, 'text/xml');
+
+      const segments: SegmentInfo[] = [];
+      const segmentTemplates = xmlDoc.getElementsByTagName('SegmentTemplate');
+
+      // This is a simplified implementation
+      // In a real implementation, we would need to parse the MPD structure properly
+      for (let i = 0; i < segmentTemplates.length; i++) {
+        const template = segmentTemplates[i];
+        const timescale = parseInt(template.getAttribute('timescale') || '1', 10);
+        const duration = parseInt(template.getAttribute('duration') || '0', 10);
+
+        if (duration > 0 && timescale > 0) {
+          const segmentDuration = duration / timescale;
+          segments.push({
+            url: `segment-${i}.m4s`,
+            start: i * segmentDuration,
+            end: (i + 1) * segmentDuration,
+            duration: segmentDuration,
+            size: 0,
+            bitrate: 0
+          });
+        }
+      }
+
+      return segments;
+    } catch {
       return [];
     }
-
-    const manifest = await response.text();
-
-    // Parse MPD manifest (simplified)
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(manifest, 'text/xml');
-
-    const segments: SegmentInfo[] = [];
-    const segmentTemplates = xmlDoc.getElementsByTagName('SegmentTemplate');
-
-    // This is a simplified implementation
-    // In a real implementation, we would need to parse the MPD structure properly
-    for (let i = 0; i < segmentTemplates.length; i++) {
-      const template = segmentTemplates[i];
-      const timescale = parseInt(template.getAttribute('timescale') || '1', 10);
-      const duration = parseInt(template.getAttribute('duration') || '0', 10);
-
-      if (duration > 0 && timescale > 0) {
-        const segmentDuration = duration / timescale;
-        segments.push({
-          url: `segment-${i}.m4s`,
-          start: i * segmentDuration,
-          end: (i + 1) * segmentDuration,
-          duration: segmentDuration,
-          size: 0,
-          bitrate: 0
-        });
-      }
-    }
-
-    return segments;
-  } catch (error: any) {
-    return [];
-  }
+  })();
 };
 
 export const getSegmentColor = (bitrate: number): string => {

@@ -1,0 +1,84 @@
+import * as React from 'react';
+import { formatTime } from '../../utils/formatTime';
+
+interface TimeSliderProps {
+  currentTime: number;
+  duration: number;
+  bufferedRanges?: { start: number; end: number }[];
+  onSeek: (time: number) => void;
+  onMouseMove?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: () => void;
+}
+
+const TimeSlider: React.FC<TimeSliderProps> = ({ 
+  currentTime, 
+  duration, 
+  bufferedRanges = [], 
+  onSeek,
+  onMouseMove,
+  onMouseLeave
+}) => {
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = parseFloat(e.target.value);
+    onSeek(time);
+  };
+
+  // Calculate buffer percentage for visualization
+  const getBufferedPercentages = (): { start: number; end: number }[] => {
+    if (!bufferedRanges || bufferedRanges.length === 0) return [];
+    
+    return bufferedRanges.map(range => ({
+      start: (range.start / duration) * 100,
+      end: (range.end / duration) * 100
+    }));
+  };
+
+  const bufferedPercentages = getBufferedPercentages();
+  const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  return (
+    <div className="time-slider-container">
+      <input
+        type="range"
+        className="time-slider"
+        min="0"
+        max={duration || 100}
+        value={currentTime}
+        onChange={handleSeek}
+      />
+      
+      {/* Buffer visualization */}
+      <div className="buffered-ranges">
+        {bufferedPercentages.map((range, index) => (
+          <div
+            key={index}
+            className="buffered-range"
+            style={{
+              left: `${range.start}%`,
+              width: `${range.end - range.start}%`
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Progress indicator */}
+      <div 
+        className="progress-indicator"
+        style={{ width: `${progressPercentage}%` }}
+      />
+      
+      <div 
+        className="time-slider-overlay"
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+      />
+      
+      <div className="time-display">
+        <span className="current-time">{formatTime(currentTime)}</span>
+        <span className="duration-time">{formatTime(duration)}</span>
+      </div>
+    </div>
+  );
+};
+
+export default TimeSlider;

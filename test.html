@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Player Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .player-container {
+            width: 100%;
+            height: 450px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        .url-input-container {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .url-input {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #333;
+            color: white;
+        }
+        .load-url-button {
+            padding: 12px 20px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .load-url-button:hover {
+            background: #0d62c9;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Video Player Test</h1>
+        
+        <div class="url-input-container">
+            <input
+                type="text"
+                id="urlInput"
+                placeholder="Enter video URL (HLS, DASH, MP4, WebM, etc.)"
+                class="url-input"
+                value="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+            />
+            <button id="loadButton" class="load-url-button">
+                Load Video
+            </button>
+        </div>
+        
+        <div class="player-container">
+            <video id="videoPlayer" controls></video>
+        </div>
+    </div>
+
+    <script>
+        const videoPlayer = document.getElementById('videoPlayer');
+        const urlInput = document.getElementById('urlInput');
+        const loadButton = document.getElementById('loadButton');
+
+        function loadVideo() {
+            const url = urlInput.value.trim();
+            if (url) {
+                videoPlayer.src = url;
+                videoPlayer.load();
+            }
+        }
+
+        loadButton.addEventListener('click', loadVideo);
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadVideo();
+            }
+        });
+
+        // Load initial video
+        loadVideo();
+    </script>
+</body>
+</html>

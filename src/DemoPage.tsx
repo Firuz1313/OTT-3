@@ -1,0 +1,98 @@
+import * as React from 'react';
+import './styles/demoPage.css';
+import Player from './components/Player';
+import VideoProcessorDemo from './components/FFmpeg/VideoProcessorDemo';
+
+const DemoPage: React.FC = () => {
+  const playerRef = React.useRef<any>(null);
+  const [customUrl, setCustomUrl] = React.useState('');
+  const [currentUrl, setCurrentUrl] = React.useState('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+
+  const samplePlaylist = {
+    items: [
+      {
+        id: '1',
+        title: 'Sample Video 1',
+        url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+        type: 'hls' as const,
+        thumbnail: 'https://example.com/thumb1.jpg',
+        duration: 120
+      },
+      {
+        id: '2',
+        title: 'Sample Video 2',
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        type: 'mp4' as const,
+        thumbnail: 'https://example.com/thumb2.jpg',
+        duration: 596
+      }
+    ],
+    currentIndex: 0
+  };
+
+  const sampleSubtitles = [
+    {
+      id: 'en',
+      label: 'English',
+      language: 'en',
+      src: 'https://example.com/subtitles-en.vtt'
+    }
+  ];
+
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomUrl(e.target.value);
+  };
+
+  const handleLoadUrl = () => {
+    if (customUrl.trim()) {
+      setCurrentUrl(customUrl.trim());
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleLoadUrl();
+    }
+  };
+
+  return (
+    <div className="demo-page">
+      <h1>Professional OTT Video Player Demo</h1>
+      <div style={{ color: 'red', fontSize: '20px', textAlign: 'center', margin: '20px 0' }}>
+        Debug: DemoPage is rendering
+      </div>
+      
+      <div className="player-section">
+        <h2>Video Player</h2>
+        <div className="url-input-container">
+          <input
+            type="text"
+            value={customUrl}
+            onChange={handleUrlChange}
+            onKeyPress={handleKeyPress}
+            placeholder="Enter video URL (HLS, DASH, MP4, WebM, etc.)"
+            className="url-input"
+          />
+          <button onClick={handleLoadUrl} className="load-url-button">
+            Load Video
+          </button>
+        </div>
+        <div className="player-container" style={{ height: '450px' }}>
+          <Player 
+            ref={playerRef}
+            src={currentUrl}
+            playlist={samplePlaylist}
+            subtitles={sampleSubtitles}
+          />
+        </div>
+      </div>
+      
+      <div className="processor-section">
+        <h2>Video Processing</h2>
+        <VideoProcessorDemo />
+      </div>
+    </div>
+  );
+};
+
+export default DemoPage;

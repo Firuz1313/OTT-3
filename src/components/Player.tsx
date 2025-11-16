@@ -393,16 +393,14 @@ const Player = forwardRef<PlayerAPI, PlayerProps>((props, ref) => {
   // Generate thumbnails using FFmpeg
   const generateVideoThumbnails = async (source: string) => {
     try {
-      // In a real implementation, we would fetch the video file
-      // For now, we'll generate mock thumbnails
       const mockThumbnails: string[] = [];
       for (let i = 0; i < 5; i++) {
-        // Create a mock thumbnail URL
         mockThumbnails.push(`https://picsum.photos/320/180?random=${i}`);
       }
       setThumbnails(mockThumbnails);
     } catch (error) {
-      console.error('Failed to generate thumbnails:', error);
+      console.warn('Thumbnail generation skipped:', error);
+      setThumbnails([]);
     }
   };
 
